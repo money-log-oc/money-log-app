@@ -1,8 +1,36 @@
 import 'package:flutter/material.dart';
+
+import '../../core/auth/auth_api.dart';
 import '../onboarding/onboarding_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _authApi = AuthApi();
+  bool _loading = false;
+
+  Future<void> _onTapLogin() async {
+    setState(() => _loading = true);
+    try {
+      // TODO: replace with real kakao sdk token
+      await _authApi.loginWithKakao('dev-kakao-access-token');
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('로그인 실패: $e')));
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +42,7 @@ class LoginScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Spacer(),
-              const Text('월급일까지,\n돈 흐름을 관리해요',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700)),
+              const Text('월급일까지,\n돈 흐름을 관리해요', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               const Text('이번 주 사용 한도, 내역 정리, 리포트를\n머니로그에서 한 번에.'),
               const Spacer(),
@@ -27,13 +54,8 @@ class LoginScreen extends StatelessWidget {
                     foregroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-                    );
-                  },
-                  child: const Text('카카오로 시작하기', style: TextStyle(fontWeight: FontWeight.w600)),
+                  onPressed: _loading ? null : _onTapLogin,
+                  child: Text(_loading ? '로그인 중...' : '카카오로 시작하기', style: const TextStyle(fontWeight: FontWeight.w600)),
                 ),
               ),
             ],
