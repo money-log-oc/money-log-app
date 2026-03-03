@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
 
-class ReportScreen extends StatelessWidget {
+import '../../core/model/api_models.dart';
+import '../../core/network/moneylog_api.dart';
+
+class ReportScreen extends StatefulWidget {
   const ReportScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    Widget bar(String tag, double w, String amount) => Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(children: [
-        SizedBox(width: 50, child: Text(tag)),
-        Expanded(
-          child: Stack(children: [
-            Container(height: 8, decoration: BoxDecoration(color: const Color(0xFFEFF3F8), borderRadius: BorderRadius.circular(999))),
-            FractionallySizedBox(widthFactor: w, child: Container(height: 8, decoration: BoxDecoration(color: const Color(0xFF2F80FF), borderRadius: BorderRadius.circular(999)))),
-          ]),
-        ),
-        const SizedBox(width: 8),
-        SizedBox(width: 50, child: Text(amount, textAlign: TextAlign.right)),
-      ]),
-    );
+  State<ReportScreen> createState() => _ReportScreenState();
+}
 
+class _ReportScreenState extends State<ReportScreen> {
+  late final MoneylogApi _api;
+  late Future<List<TagReportItem>> _tags;
+
+  @override
+  void initState() {
+    super.initState();
+    _api = MoneylogApi();
+    _tags = _api.fetchMonthlyTags('2026-03');
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(12),
@@ -35,15 +38,51 @@ class ReportScreen extends StatelessWidget {
               ]),
             ),
           ),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(children: [
-                bar('음식', .82, '11.2만'),
-                bar('카페', .56, '6.4만'),
-                bar('교통', .39, '4.4만'),
-              ]),
-            ),
+          FutureBuilder<List<TagReportItem>>(
+            future: _tags,
+            builder: (context, snap) {
+              if (snap.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snap.hasError) {
+                return Column(children: [
+                  Text('리포트를 불러오지 못했어요\n${snap.error}', textAlign: TextAlign.center),
+                  const SizedBox(height: 8),
+                  FilledButton(
+                    onPressed: () => setState(() => _tags = _api.fetchMonthlyTags('2026-03')),
+                    child: const Text('다시 시도'),
+                  )
+                ]);
+              }
+
+              final items = snap.data!;
+              final maxVal = items.isEmpty ? 1 : items.map((e) => e.amount).reduce((a, b) => a > b ? a : b);
+
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    children: items.map((e) {
+                      final w = e.amount / maxVal;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(children: [
+                          SizedBox(width: 60, child: Text(e.tag)),
+                          Expanded(
+                            child: Stack(children: [
+                              Container(height: 8, decoration: BoxDecoration(color: const Color(0xFFEFF3F8), borderRadius: BorderRadius.circular(999))),
+                              FractionallySizedBox(widthFactor: w, child: Container(height: 8, decoration: BoxDecoration(color: const Color(0xFF2F80FF), borderRadius: BorderRadius.circular(999)))),
+                            ]),
+                          ),
+                          const SizedBox(width: 8),
+                          SizedBox(width: 64, child: Text('${(e.amount / 10000).toStringAsFixed(1)}만', textAlign: TextAlign.right)),
+                        ]),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
