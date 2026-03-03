@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/auth/auth_api.dart';
+import '../../core/auth/auth_session.dart';
 import '../onboarding/onboarding_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,7 +19,9 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _loading = true);
     try {
       // TODO: replace with real kakao sdk token
-      await _authApi.loginWithKakao('dev-kakao-access-token');
+      final res = await _authApi.loginWithKakao('dev-kakao-access-token');
+      AuthSession.save(access: res.accessToken, refresh: res.refreshToken, uid: res.userId);
+
       if (!mounted) return;
       Navigator.pushReplacement(
         context,

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../core/auth/auth_session.dart';
+import '../features/home/shell_screen.dart';
 import '../features/login/login_screen.dart';
 
 class MoneylogApp extends StatelessWidget {
@@ -14,7 +17,7 @@ class MoneylogApp extends StatelessWidget {
         fontFamily: 'Pretendard',
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2F80FF)),
       ),
-      home: const LoginScreen(),
+      home: AuthSession.isLoggedIn ? const ShellScreen() : const LoginScreen(),
     );
   }
 }

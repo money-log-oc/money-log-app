@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../core/auth/auth_session.dart';
+import '../login/login_screen.dart';
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -27,10 +30,22 @@ class SettingsScreen extends StatelessWidget {
             ]),
           ),
           Card(
-            child: Column(children: const [
-              ListTile(title: Text('약관/개인정보 처리방침')),
-              Divider(height: 1),
-              ListTile(title: Text('앱 버전'), trailing: Text('v1.0.0-beta')),
+            child: Column(children: [
+              const ListTile(title: Text('약관/개인정보 처리방침')),
+              const Divider(height: 1),
+              const ListTile(title: Text('앱 버전'), trailing: Text('v1.0.0-beta')),
+              const Divider(height: 1),
+              ListTile(
+                title: const Text('로그아웃', style: TextStyle(color: Colors.red)),
+                onTap: () {
+                  AuthSession.clear();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+                  );
+                },
+              ),
             ]),
           ),
         ],
