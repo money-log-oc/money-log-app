@@ -21,6 +21,46 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     _transactions = _api.fetchTransactions(month: '2026-03');
   }
 
+  Future<void> _reload() async {
+    setState(() => _transactions = _api.fetchTransactions(month: '2026-03'));
+  }
+
+  Future<void> _classify(TransactionItem tx) async {
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Wrap(children: [
+          const ListTile(title: Text('태그 선택')),
+          ...['음식', '카페', '생활', '교통', '쇼핑', '회식']
+              .map((t) => ListTile(title: Text(t), onTap: () => Navigator.pop(ctx, t))),
+          ListTile(
+            title: const Text('제외 처리(이체)'),
+            textColor: Colors.red,
+            onTap: () => Navigator.pop(ctx, '__exclude__'),
+          )
+        ]),
+      ),
+    );
+
+    if (picked == null) return;
+
+    try {
+      if (picked == '__exclude__') {
+        await _api.updateTransactionExcluded(tx.id, true, reason: 'TRANSFER');
+      } else {
+        await _api.updateTransactionTag(tx.id, [picked]);
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('반영 완료')));
+      }
+      await _reload();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('반영 실패: $e')));
+      }
+    }
+  }
+
   String won(int v) => '-${v.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',')}원';
 
   @override
@@ -52,7 +92,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   Text('내역을 불러오지 못했어요\n${snap.error}', textAlign: TextAlign.center),
                   const SizedBox(height: 8),
                   FilledButton(
-                    onPressed: () => setState(() => _transactions = _api.fetchTransactions(month: '2026-03')),
+                    onPressed: () => _reload(),
                     child: const Text('다시 시도'),
                   )
                 ]);
@@ -63,9 +103,10 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 children: items
                     .map((tx) => Card(
                           child: ListTile(
+                            onTap: () => _classify(tx),
                             leading: const CircleAvatar(child: Icon(Icons.store_mall_directory_outlined)),
                             title: Text(tx.merchant),
-                            subtitle: Text(tx.tags.isEmpty ? '미분류' : tx.tags.join(',')),
+                            subtitle: Text(tx.excluded ? '제외됨' : (tx.tags.isEmpty ? '미분류' : tx.tags.join(','))),
                             trailing: Text(won(tx.amount), style: const TextStyle(fontWeight: FontWeight.w700)),
                           ),
                         ))

@@ -29,6 +29,26 @@ class MoneylogApi {
     return (jsonDecode(res.body) as List).map((e) => TransactionItem.fromJson(e)).toList();
   }
 
+  Future<TransactionItem> updateTransactionTag(int id, List<String> tags) async {
+    final res = await _client.patch(
+      _u('/api/v1/transactions/$id/tag'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'tagIds': tags}),
+    );
+    _ensureOk(res);
+    return TransactionItem.fromJson(jsonDecode(res.body));
+  }
+
+  Future<TransactionItem> updateTransactionExcluded(int id, bool excluded, {String? reason}) async {
+    final res = await _client.patch(
+      _u('/api/v1/transactions/$id/exclude'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'excluded': excluded, 'reason': reason}),
+    );
+    _ensureOk(res);
+    return TransactionItem.fromJson(jsonDecode(res.body));
+  }
+
   Future<List<TagReportItem>> fetchMonthlyTags(String month) async {
     final res = await _client.get(_u('/api/v1/reports/monthly-tags', {'month': month}));
     _ensureOk(res);
