@@ -99,6 +99,12 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               }
 
               final items = snap.data!;
+              if (items.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 32),
+                  child: Center(child: Text('내역이 없어요.')),
+                );
+              }
               return Column(
                 children: items
                     .map((tx) => Card(

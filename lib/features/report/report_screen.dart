@@ -56,7 +56,10 @@ class _ReportScreenState extends State<ReportScreen> {
               }
 
               final items = snap.data!;
-              final maxVal = items.isEmpty ? 1 : items.map((e) => e.amount).reduce((a, b) => a > b ? a : b);
+              if (items.isEmpty) {
+                return const Card(child: Padding(padding: EdgeInsets.all(16), child: Text('리포트 데이터가 없어요.')));
+              }
+              final maxVal = items.map((e) => e.amount).reduce((a, b) => a > b ? a : b);
 
               return Card(
                 child: Padding(
