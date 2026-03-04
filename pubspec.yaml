@@ -9,6 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.2.2
+  kakao_flutter_sdk_user: ^1.9.7+3
 
 dev_dependencies:
   flutter_test:
