@@ -14,7 +14,7 @@ class MoneylogApi {
       Uri.parse('${AppConfig.apiBaseUrl}$path').replace(queryParameters: q);
 
   Future<HomeSummary> fetchHomeSummary() async {
-    final res = await _client.get(_u('/api/v1/home/summary'));
+    final res = await _client.get(_u('/api/home/summary'));
     _ensureOk(res);
     return HomeSummary.fromJson(jsonDecode(res.body));
   }
@@ -24,14 +24,14 @@ class MoneylogApi {
       if (month != null && month.isNotEmpty) 'month': month,
       'unclassified': '$unclassified',
     };
-    final res = await _client.get(_u('/api/v1/transactions', q));
+    final res = await _client.get(_u('/api/transactions', q));
     _ensureOk(res);
     return (jsonDecode(res.body) as List).map((e) => TransactionItem.fromJson(e)).toList();
   }
 
   Future<TransactionItem> updateTransactionTag(int id, List<String> tags) async {
     final res = await _client.patch(
-      _u('/api/v1/transactions/$id/tag'),
+      _u('/api/transactions/$id/tag'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'tagIds': tags}),
     );
@@ -41,7 +41,7 @@ class MoneylogApi {
 
   Future<TransactionItem> updateTransactionExcluded(int id, bool excluded, {String? reason}) async {
     final res = await _client.patch(
-      _u('/api/v1/transactions/$id/exclude'),
+      _u('/api/transactions/$id/exclude'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'excluded': excluded, 'reason': reason}),
     );
@@ -50,7 +50,7 @@ class MoneylogApi {
   }
 
   Future<List<TagReportItem>> fetchMonthlyTags(String month) async {
-    final res = await _client.get(_u('/api/v1/reports/monthly-tags', {'month': month}));
+    final res = await _client.get(_u('/api/reports/monthly-tags', {'month': month}));
     _ensureOk(res);
     return (jsonDecode(res.body) as List).map((e) => TagReportItem.fromJson(e)).toList();
   }

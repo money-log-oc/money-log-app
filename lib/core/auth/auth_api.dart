@@ -23,7 +23,7 @@ class AuthApi {
   AuthApi({http.Client? client}) : _client = client ?? http.Client();
 
   Future<AuthResult> loginWithKakao(String kakaoAccessToken) async {
-    final uri = Uri.parse('${AppConfig.apiBaseUrl}/api/v1/auth/kakao');
+    final uri = Uri.parse('${AppConfig.apiBaseUrl}/api/auth/kakao');
     final res = await _client.post(uri,
         headers: {'Content-Type': 'application/json'}, body: jsonEncode({'accessToken': kakaoAccessToken}));
     if (res.statusCode < 200 || res.statusCode >= 300) {
