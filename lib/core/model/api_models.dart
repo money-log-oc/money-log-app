@@ -1,14 +1,28 @@
+class CycleRange {
+  final DateTime? startAt;
+  final DateTime? endAt;
+
+  CycleRange({required this.startAt, required this.endAt});
+
+  factory CycleRange.fromJson(Map<String, dynamic> j) => CycleRange(
+        startAt: DateTime.tryParse((j['startAt'] ?? '').toString()),
+        endAt: DateTime.tryParse((j['endAt'] ?? '').toString()),
+      );
+}
+
 class HomeSummary {
   final int monthlyBudget;
   final int weeklySpent;
   final int weeklyLimit;
   final int livingAccountBalance;
+  final CycleRange? cycle;
 
   HomeSummary({
     required this.monthlyBudget,
     required this.weeklySpent,
     required this.weeklyLimit,
     required this.livingAccountBalance,
+    required this.cycle,
   });
 
   factory HomeSummary.fromJson(Map<String, dynamic> j) => HomeSummary(
@@ -16,6 +30,9 @@ class HomeSummary {
         weeklySpent: (j['weeklySpent'] ?? 0) as int,
         weeklyLimit: (j['weeklyLimit'] ?? 0) as int,
         livingAccountBalance: (j['livingAccountBalance'] ?? 0) as int,
+        cycle: j['cycle'] is Map<String, dynamic>
+            ? CycleRange.fromJson(j['cycle'] as Map<String, dynamic>)
+            : null,
       );
 }
 
@@ -52,6 +69,6 @@ class TagReportItem {
 
   TagReportItem({required this.tag, required this.amount});
 
-  factory TagReportItem.fromJson(Map<String, dynamic> j) =>
-      TagReportItem(tag: (j['tag'] ?? '') as String, amount: (j['amount'] ?? 0) as int);
+  factory TagReportItem.fromJson(Map<String, dynamic> j) => TagReportItem(
+      tag: (j['tag'] ?? '') as String, amount: (j['amount'] ?? 0) as int);
 }

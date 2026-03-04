@@ -11,6 +11,8 @@
 - Kakao SDK login wired to `/api/auth/kakao`
 - Auth session persisted with `flutter_secure_storage`
 - Auto-login enabled via app startup session restore (`AuthSession.initialize`)
+- `MoneylogApi` now sends Bearer access token and retries once after refresh-token reissue on 401/403
+- Home UI binds cycle range(`cycle.endAt`) to remaining-days indicator
 
 ## Run target
 - Flutter iOS-first
