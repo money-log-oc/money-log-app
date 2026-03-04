@@ -91,3 +91,21 @@ class DailySpendingItem {
         expense: (j['expense'] ?? 0) as int,
       );
 }
+
+class BudgetSettings {
+  final int paydayDay;
+  final int monthlyBudget;
+  final String weekStart;
+
+  BudgetSettings({
+    required this.paydayDay,
+    required this.monthlyBudget,
+    required this.weekStart,
+  });
+
+  factory BudgetSettings.fromJson(Map<String, dynamic> j) => BudgetSettings(
+        paydayDay: (j['paydayDay'] ?? 25) as int,
+        monthlyBudget: (j['monthlyBudget'] ?? 0) as int,
+        weekStart: (j['weekStart'] ?? 'MONDAY') as String,
+      );
+}

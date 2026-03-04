@@ -75,6 +75,37 @@ class MoneylogApi {
         .toList();
   }
 
+  Future<BudgetSettings> fetchBudgetSettings() async {
+    final res = await _authedGet(_u('/api/settings/budget'));
+    _ensureOk(res);
+    return BudgetSettings.fromJson(jsonDecode(res.body));
+  }
+
+  Future<BudgetSettings> updateBudgetSettings({
+    required int paydayDay,
+    required int monthlyBudget,
+  }) async {
+    var res = await _client.put(
+      _u('/api/settings/budget'),
+      headers: _jsonAuthHeaders(),
+      body:
+          jsonEncode({'paydayDay': paydayDay, 'monthlyBudget': monthlyBudget}),
+    );
+    if (res.statusCode == 401 || res.statusCode == 403) {
+      final refreshed = await _tryRefreshToken();
+      if (refreshed) {
+        res = await _client.put(
+          _u('/api/settings/budget'),
+          headers: _jsonAuthHeaders(),
+          body: jsonEncode(
+              {'paydayDay': paydayDay, 'monthlyBudget': monthlyBudget}),
+        );
+      }
+    }
+    _ensureOk(res);
+    return BudgetSettings.fromJson(jsonDecode(res.body));
+  }
+
   Future<http.Response> _authedGet(Uri uri) async {
     var res = await _client.get(uri, headers: _authHeaders());
     if (res.statusCode == 401 || res.statusCode == 403) {

@@ -20,7 +20,7 @@
 - `KAKAO_NATIVE_APP_KEY` via `--dart-define=KAKAO_NATIVE_APP_KEY=...`
 
 ## Next action checklist
-1. 설정(월급일/예산 수정) API 연동
-2. Add widget tests for Home/Transactions loading+error state
-3. 로그인 실패 유형별 메시지 정교화 (취소/네트워크/권한)
-4. v1 라우트 제거 전 앱 라우트 최종 점검(`/api/*` only)
+1. Add widget tests for Home/Transactions/Report loading+error state
+2. 로그인 실패 유형별 메시지 정교화 (취소/네트워크/권한)
+3. v1 라우트 제거 전 앱 라우트 최종 점검(`/api/*` only)
+4. 설정 스크린 입력 UX 개선(숫자 포맷/유효성 메시지)
