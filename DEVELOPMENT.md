@@ -20,7 +20,7 @@
 - `KAKAO_NATIVE_APP_KEY` via `--dart-define=KAKAO_NATIVE_APP_KEY=...`
 
 ## Next action checklist
-1. 홈 실데이터 바인딩 안정화
-2. UX polish for transaction bottom-sheet v11 fidelity
+1. 리포트 실데이터/빈상태/에러상태 완성
+2. 설정(월급일/예산 수정) API 연동
 3. Add widget tests for Home/Transactions loading+error state
 4. 로그인 실패 유형별 메시지 정교화 (취소/네트워크/권한)
