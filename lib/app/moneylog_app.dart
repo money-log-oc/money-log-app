@@ -17,7 +17,18 @@ class MoneylogApp extends StatelessWidget {
         fontFamily: 'Pretendard',
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2F80FF)),
       ),
-      home: AuthSession.isLoggedIn ? const ShellScreen() : const LoginScreen(),
+      home: FutureBuilder<void>(
+        future: AuthSession.initialize(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Scaffold(
+                body: Center(child: CircularProgressIndicator()));
+          }
+          return AuthSession.isLoggedIn
+              ? const ShellScreen()
+              : const LoginScreen();
+        },
+      ),
     );
   }
 }

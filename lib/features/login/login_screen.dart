@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final kakaoAccessToken = await _issueKakaoAccessToken();
       final res = await _authApi.loginWithKakao(kakaoAccessToken);
-      AuthSession.save(
+      await AuthSession.save(
           access: res.accessToken, refresh: res.refreshToken, uid: res.userId);
 
       if (!mounted) return;
