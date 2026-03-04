@@ -66,6 +66,15 @@ class MoneylogApi {
         .toList();
   }
 
+  Future<List<DailySpendingItem>> fetchDailySpending(String month) async {
+    final res =
+        await _authedGet(_u('/api/reports/daily-spending', {'month': month}));
+    _ensureOk(res);
+    return (jsonDecode(res.body) as List)
+        .map((e) => DailySpendingItem.fromJson(e))
+        .toList();
+  }
+
   Future<http.Response> _authedGet(Uri uri) async {
     var res = await _client.get(uri, headers: _authHeaders());
     if (res.statusCode == 401 || res.statusCode == 403) {

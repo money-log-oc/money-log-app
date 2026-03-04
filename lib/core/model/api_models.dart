@@ -72,3 +72,22 @@ class TagReportItem {
   factory TagReportItem.fromJson(Map<String, dynamic> j) => TagReportItem(
       tag: (j['tag'] ?? '') as String, amount: (j['amount'] ?? 0) as int);
 }
+
+class DailySpendingItem {
+  final String date;
+  final int income;
+  final int expense;
+
+  DailySpendingItem({
+    required this.date,
+    required this.income,
+    required this.expense,
+  });
+
+  factory DailySpendingItem.fromJson(Map<String, dynamic> j) =>
+      DailySpendingItem(
+        date: (j['date'] ?? '') as String,
+        income: (j['income'] ?? 0) as int,
+        expense: (j['expense'] ?? 0) as int,
+      );
+}
