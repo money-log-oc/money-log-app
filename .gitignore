@@ -6,3 +6,6 @@ ios/Pods/
 ios/.symlinks/
 .env
 *.iml
+.idea/
+.flutter-plugins-dependencies
+*.log
